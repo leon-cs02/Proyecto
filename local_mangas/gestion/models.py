@@ -11,6 +11,10 @@ class Mangas(models.Model):
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.nombre}"
+    #podemos crear la clase "Meta" para arreglar errores ortográficos u ordenar en qué orden ver los elementos con "ordering[]"
+
 class Libros(models.Model):
     nombre = models.CharField(max_length=150)
     editorial = models.CharField(max_length=150)
@@ -18,6 +22,9 @@ class Libros(models.Model):
     genero = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
+    
+    def __str__(self):
+        return f"{self.nombre}"
 
 class Usuarios(models.Model):
     nombre = models.CharField(max_length=50)
@@ -25,3 +32,6 @@ class Usuarios(models.Model):
     nombre_usuario = models.CharField(max_length=50)
     email = models.EmailField()
     password = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.nombre_usuario}"
