@@ -1,0 +1,20 @@
+{% extends 'cd_html/index.html' %}
+
+{% block titulo %}
+<title>Ingresar Mangas</title>
+{% endblock titulo %}
+
+{% block contenido %}
+
+<div class="container">
+
+    <h1>Ingresar al sistema</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form }}
+        </div>
+        <button class="btn_agregar_mangas" type="submit">Agregar</button>
+    </form>
+</div>
+{% endblock contenido %}

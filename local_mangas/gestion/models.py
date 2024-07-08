@@ -1,5 +1,4 @@
 from django.db import models
-
 # Modelo de gestion de stock
 
 class Mangas(models.Model):
@@ -25,6 +24,17 @@ class Libros(models.Model):
     
     def __str__(self):
         return f"{self.nombre}"
+    
+class Comics(models.Model):
+    nombre = models.CharField(max_length=150)
+    editorial = models.CharField(max_length=150)
+    autor = models.CharField(max_length=150)
+    genero = models.CharField(max_length=150)
+    cantidad_stock = models.IntegerField()
+    cantidad_hojas = models.IntegerField()
+    
+    def __str__(self):
+        return f"{self.nombre}"
 
 class Usuarios(models.Model):
     nombre = models.CharField(max_length=50)
@@ -35,3 +45,4 @@ class Usuarios(models.Model):
 
     def __str__(self):
         return f"{self.nombre_usuario}"
+    
