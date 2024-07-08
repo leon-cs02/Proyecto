@@ -1,0 +1,20 @@
+{% extends 'cd_html/index.html' %}
+
+{% block titulo %}
+<title>Buscar Cómics</title>
+{% endblock titulo %}
+
+{% block contenido %}
+
+<div class="container">
+
+    <h1>Buscar Cómcis en el Sistema</h1>
+    <form action="{% url 'encontrarComics' %}" method="get">
+        {% csrf_token %}
+        <table>
+            <p> Ingrese el comic que desea Buscar <input type="text" name="buscar" id="buscar"></p>
+        </table>
+        <input type="submit" value="Buscar">
+    </form>
+</div>
+{% endblock contenido %}
