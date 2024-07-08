@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from gestion.models import *
 
-# Create your views here.
+# Métodos para visualizar en la página los html
 
 from gestion.forms import *
 
@@ -91,4 +91,47 @@ def librosForm(request):
     else:
         miForm = LibrosForm()
     return render(request, "cd_html/librosForm.html", {"form": miForm})
-    
+
+#Métodos para buscar en cada model
+
+#Métodos para encontrar Mangas:
+
+def buscarMangas(request):
+    return render(request, "cd_html/buscarMangas.html")
+
+def encontrarMangas(request):
+    if request.GET["buscar"]:
+        patron = request.GET["buscar"]
+        mangas = Mangas.objects.filter(nombre__icontains=patron)
+        contexto = {"mangas": mangas}
+    else:
+        contexto = {"mangas": Mangas.objects.all()}
+    return render(request, "cd_html/mangas.html", contexto)
+
+#Métodos para encontrar Comics:
+
+def buscarComics(request):
+    return render(request, "cd_html/buscarComics.html")
+
+def encontrarComics(request):
+    if request.GET["buscar"]:
+        patron = request.GET["buscar"]
+        comics = Comics.objects.filter(nombre__icontains=patron)
+        contexto = {"comics": comics}
+    else:
+        contexto = {"comics": Comics.objects.all()}
+    return render(request, "cd_html/comics.html", contexto)
+
+#Métodos para encontrar Libros:
+
+def buscarLibros(request):
+    return render(request, "cd_html/buscarLibros.html")
+
+def encontrarLibros(request):
+    if request.GET["buscar"]:
+        patron = request.GET["buscar"]
+        libros = Libros.objects.filter(nombre__icontains=patron)
+        contexto = {"libros": libros}
+    else:
+        contexto = {"comics": Libros.objects.all()}
+    return render(request, "cd_html/libros.html", contexto)

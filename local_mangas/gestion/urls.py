@@ -12,4 +12,11 @@ urlpatterns = [
     path('mangasForm/', mangasForm, name="mangasForm"),
     path('comicsForm/', comicsForm, name="comicsForm"),
     path('librosForm/', librosForm, name="librosForm"),
+    #Buscar
+    path('buscarMangas/', buscarMangas, name="buscarMangas"),
+    path('encontrarMangas/', encontrarMangas, name="encontrarMangas"),
+    path('buscarComics/', buscarComics, name="buscarComics"),
+    path('encontrarComics/', encontrarComics, name="encontrarComics"),
+    path('buscarLibros/', buscarLibros, name="buscarLibros"),
+    path('encontrarLibros/', encontrarLibros, name="encontrarLibros"),
 ]
