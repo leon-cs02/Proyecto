@@ -1,0 +1,40 @@
+{% extends 'cd_html/index.html' %}
+
+{% block titulo %}
+<title>Mangas</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<div class="lista_mangas">
+    <h1>Lista de Mangas</h1>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Editorial</th>
+                <th>Autor</th>
+                <th>Demografía</th>
+                <th>Cantidad de hojas</th>
+                <th>Cantidad en Stock</th>
+            
+            </tr>
+        </thead>
+        <tbody>
+            {% for manga in mangas %}
+            <tr>
+                <td>{{ manga.id }}</td>
+                <td>{{ manga.nombre }}</td>
+                <td>{{ manga.editorial }}</td>
+                <td>{{ manga.autor }}</td>
+                <td>{{ manga.demografia }}</td>
+                <td>{{ manga.cantidad_hojas }}</td>
+                <td>{{ manga.cantidad_stock }}</td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}
+    
