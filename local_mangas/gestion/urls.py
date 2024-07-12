@@ -19,4 +19,12 @@ urlpatterns = [
     path('encontrarComics/', encontrarComics, name="encontrarComics"),
     path('buscarLibros/', buscarLibros, name="buscarLibros"),
     path('encontrarLibros/', encontrarLibros, name="encontrarLibros"),
+    #Actualizar:
+    path('mangasMod/<id_mangas>/', mangasMod, name="mangasMod"),
+    path('comicsMod/<id_comics>/', comicsMod, name="comicsMod"),
+    path('librosMod/<id_libros>/', librosMod, name="librosMod"),
+    #Borrar:
+    path('mangasDel/<id_mangas>/', mangasDel, name="mangasDel"),
+    path('comicsDel/<id_comics>/', comicsDel, name="comicsDel"),
+    path('librosDel/<id_libros>/', librosDel, name="librosDel"),
 ]
