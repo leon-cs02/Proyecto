@@ -72,17 +72,18 @@ body {
     margin-top: 10px;
 }
 
-.btn_agregar_mangas:hover {
-    background-color: #555;
+.btn-agregar-link {
+    color: #fff;
+    text-decoration: none;
+    display: block;
 }
 
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.btn-agregar-link i {
+    margin-right: 5px;
+}
+
+.btn_agregar_mangas:hover {
+    background-color: #555;
 }
 
 .styled-table {
@@ -145,4 +146,76 @@ body {
 .navegacion .menu ul .listas a:hover {
     background-color: #555;
     border-radius: 4px;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+.footer .container-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer .list-inline {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footer .list-inline-item {
+    margin-right: 10px;
+}
+
+.footer .list-inline-item a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer .list-inline-item a:hover {
+    color: #aaa;
+}
+
+.footer .text-muted {
+    color: #aaa !important;
+}
+
+.footer .list-inline-item .fs-3 {
+    font-size: 1.5rem;
+}
+/* styles.css */
+
+.btn-agregar {
+    background-color: #4CAF50;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-agregar:hover {
+    background-color: #45a049;
+}
+
+.btn-agregar a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-agregar i {
+    margin-right: 5px;
 }

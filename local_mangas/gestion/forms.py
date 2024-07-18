@@ -8,6 +8,7 @@ class MangasForm(forms.Form):
     demografia = forms.CharField(max_length=150, required=True)
     cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
     cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
+    precio = forms.IntegerField(required=True, label="Precio")
 
 class ComicsForm(forms.Form):
     nombre = forms.CharField(max_length=150, required=True, label="Nombre del Comic")
@@ -16,6 +17,7 @@ class ComicsForm(forms.Form):
     genero = forms.CharField(max_length=150, required=True)
     cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
     cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
+    precio = forms.IntegerField(required=True, label="Precio")
 
 class LibrosForm(forms.Form):
     nombre = forms.CharField(max_length=150, required=True, label="Nombre del Libro")
@@ -24,3 +26,4 @@ class LibrosForm(forms.Form):
     genero = forms.CharField(max_length=150, required=True)
     cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
     cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
+    precio = forms.IntegerField(required=True, label="Precio")

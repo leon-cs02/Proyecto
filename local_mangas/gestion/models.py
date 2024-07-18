@@ -9,6 +9,7 @@ class Mangas(models.Model):
     demografia = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
+    precio = models.IntegerField()
 
     def __str__(self):
         return f"{self.nombre}"
@@ -21,6 +22,7 @@ class Libros(models.Model):
     genero = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
+    precio = models.IntegerField()
     
     def __str__(self):
         return f"{self.nombre}"
@@ -32,6 +34,7 @@ class Comics(models.Model):
     genero = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
+    precio = models.IntegerField()
     
     def __str__(self):
         return f"{self.nombre}"
