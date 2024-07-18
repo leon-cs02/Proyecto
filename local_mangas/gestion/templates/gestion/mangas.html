@@ -1,4 +1,4 @@
-{% extends 'cd_html/index.html' %}
+{% extends 'gestion/index.html' %}
 
 {% block titulo %}
 <title>Mangas</title>
@@ -26,6 +26,7 @@
                 <th>Demografía</th>
                 <th>Cantidad de hojas</th>
                 <th>Cantidad en Stock</th>
+                <th>Precio</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -40,6 +41,7 @@
                 <td>{{ manga.demografia }}</td>
                 <td>{{ manga.cantidad_hojas }}</td>
                 <td>{{ manga.cantidad_stock }}</td>
+                <td>{{ manga.precio }}</td>
                 <td>
                     <a href="{% url 'mangasMod' manga.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
                     <a href="{% url 'mangasDel' manga.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                

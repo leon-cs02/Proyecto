@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from gestion.models import *
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, ListView, DeleteView, FormView, UpdateView
 
 # Métodos para visualizar en la página los html
 
@@ -11,7 +13,7 @@ def index(request):
     contexto = {
         
     }
-    return render(request, 'cd_html/index.html', contexto)
+    return render(request, 'gestion/index.html', contexto)
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -22,7 +24,7 @@ def mangas(request):
     contexto = {
         "mangas": Mangas.objects.all()
     }
-    return render(request, 'cd_html/mangas.html', contexto)
+    return render(request, 'gestion/mangas.html', contexto)
 
 #Form del Manga
 
@@ -37,18 +39,19 @@ def mangasForm(request):
             form_demografia = miForm.cleaned_data.get("demografia")
             form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            mangas = Mangas(nombre=form_nombre, tomo=form_tomo, editorial=form_editorial, autor=form_autor, demografia=form_demografia, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas)
+            form_precio = miForm.cleaned_data.get("precio")
+            mangas = Mangas(nombre=form_nombre, tomo=form_tomo, editorial=form_editorial, autor=form_autor, demografia=form_demografia, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio)
             mangas.save()
             contexto = {"mangas": Mangas.objects.all()}
-            return render(request,"cd_html/mangas.html", contexto)
+            return render(request,"gestion/mangas.html", contexto)
     else:
         miForm = MangasForm()
-    return render(request, "cd_html/mangasForm.html", {"form": miForm})
+    return render(request, "gestion/mangasForm.html", {"form": miForm})
 
 #Buscar y encontrar del Manga:
 
 def buscarMangas(request):
-    return render(request, "cd_html/buscarMangas.html")
+    return render(request, "gestion/buscarMangas.html")
 
 def encontrarMangas(request):
     if request.GET["buscar"]:
@@ -57,7 +60,7 @@ def encontrarMangas(request):
         contexto = {"mangas": mangas}
     else:
         contexto = {"mangas": Mangas.objects.all()}
-    return render(request, "cd_html/mangas.html", contexto)
+    return render(request, "gestion/mangas.html", contexto)
 
 #Modificar Mangas
 
@@ -73,9 +76,10 @@ def mangasMod(request, id_mangas):
             mangas.demografia = miForm.cleaned_data.get("demografia")
             mangas.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             mangas.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
+            mangas.precio = miForm.cleaned_data.get("precio")
             mangas.save()
             contexto = {"mangas": Mangas.objects.all()}
-            return render(request,"cd_html/mangas.html", contexto)
+            return render(request,"gestion/mangas.html", contexto)
     else:
         miForm = MangasForm(initial={"nombre": mangas.nombre, 
                                      "tomo": mangas.tomo , 
@@ -83,9 +87,10 @@ def mangasMod(request, id_mangas):
                                      "autor": mangas.autor, 
                                      "demografia": mangas.demografia, 
                                      "cantidad_stock": mangas.cantidad_stock,
-                                     "cantidad_hojas": mangas.cantidad_hojas})
+                                     "cantidad_hojas": mangas.cantidad_hojas,
+                                     "precio": mangas.precio})
         
-    return render(request, "cd_html/mangasForm.html", {"form": miForm})
+    return render(request, "gestion/mangasForm.html", {"form": miForm})
 
 #Borrar Mangas:
 
@@ -93,85 +98,28 @@ def mangasDel(request, id_mangas):
     mangas = Mangas.objects.get(id=id_mangas)
     mangas.delete()
     contexto = {"mangas": Mangas.objects.all()}
-    return render(request,"cd_html/mangas.html", contexto)
+    return render(request,"gestion/mangas.html", contexto)
 
 #------------------------------------------------------------------------------------------------------------
 
 #Métodos pertenecientes al Model Cómics:
 
-def comics(request):
-    contexto = {
-        "comics": Comics.objects.all()
-    }
-    return render(request, 'cd_html/comics.html', contexto)
+class ComicsView(ListView):
+    model = Comics
 
-#Form de los cómics:
+class ComicsCreate(CreateView):
+    model = Comics
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio"]
+    success_url = reverse_lazy("comics")
 
-def comicsForm(request):
-    if request.method == "POST":
-        miForm = ComicsForm(request.POST)
-        if miForm.is_valid():
-            form_nombre = miForm.cleaned_data.get("nombre")
-            form_editorial = miForm.cleaned_data.get("editorial")
-            form_autor = miForm.cleaned_data.get("autor")
-            form_genero = miForm.cleaned_data.get("genero")
-            form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            comics = Comics(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas)
-            comics.save()
-            contexto = {"comics": Comics.objects.all()}
-            return render(request,"cd_html/comics.html", contexto)
-    else:
-        miForm = ComicsForm()
-    return render(request, "cd_html/comicsForm.html", {"form": miForm})
+class ComicsUpdate(UpdateView):
+    model = Comics
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio"]
+    success_url = reverse_lazy("comics")
 
-#Buscar y encontrar de los Cómics:
-
-def buscarComics(request):
-    return render(request, "cd_html/buscarComics.html")
-
-def encontrarComics(request):
-    if request.GET["buscar"]:
-        patron = request.GET["buscar"]
-        comics = Comics.objects.filter(nombre__icontains=patron)
-        contexto = {"comics": comics}
-    else:
-        contexto = {"comics": Comics.objects.all()}
-    return render(request, "cd_html/comics.html", contexto)
-
-#Modificar Cómics:
-
-def comicsMod(request, id_comics):
-    comics = Comics.objects.get(id=id_comics)
-    if request.method == "POST":
-        miForm = ComicsForm(request.POST)
-        if miForm.is_valid():
-            comics.nombre = miForm.cleaned_data.get("nombre")
-            comics.editorial = miForm.cleaned_data.get("editorial")
-            comics.autor = miForm.cleaned_data.get("autor")
-            comics.genero = miForm.cleaned_data.get("genero")
-            comics.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            comics.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            comics.save()
-            contexto = {"comics": Comics.objects.all()}
-            return render(request,"cd_html/comics.html", contexto)
-    else:
-        miForm = ComicsForm(initial={"nombre": comics.nombre,  
-                                     "editorial": comics.editorial, 
-                                     "autor": comics.autor, 
-                                     "genero": comics.genero, 
-                                     "cantidad_stock": comics.cantidad_stock,
-                                     "cantidad_hojas": comics.cantidad_hojas})
-        
-    return render(request, "cd_html/comicsForm.html", {"form": miForm})
-
-#Borrar Libros:
-
-def comicsDel(request, id_comics):
-    comics = Comics.objects.get(id=id_comics)
-    comics.delete()
-    contexto = {"comics": Comics.objects.all()}
-    return render(request,"cd_html/comics.html", contexto)
+class ComicsDelete(DeleteView):
+    model = Comics
+    success_url = reverse_lazy("comics")
 
 #------------------------------------------------------------------------------------------------------------
 
@@ -181,7 +129,7 @@ def libros(request):
     contexto = {
         "libros": Libros.objects.all()
     }
-    return render(request, 'cd_html/libros.html', contexto)
+    return render(request, 'gestion/libros.html', contexto)
 
 #Form de los Libros:
 
@@ -195,18 +143,19 @@ def librosForm(request):
             form_genero = miForm.cleaned_data.get("genero")
             form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            libros = Libros(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas)
+            form_precio = miForm.cleaned_data.get("precio")
+            libros = Libros(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio)
             libros.save()
             contexto = {"libros": Libros.objects.all()}
-            return render(request,"cd_html/libros.html", contexto)
+            return render(request,"gestion/libros.html", contexto)
     else:
         miForm = LibrosForm()
-    return render(request, "cd_html/librosForm.html", {"form": miForm})
+    return render(request, "gestion/librosForm.html", {"form": miForm})
 
 #Buscar y encontrar los Libros:
 
 def buscarLibros(request):
-    return render(request, "cd_html/buscarLibros.html")
+    return render(request, "gestion/buscarLibros.html")
 
 def encontrarLibros(request):
     if request.GET["buscar"]:
@@ -214,8 +163,8 @@ def encontrarLibros(request):
         libros = Libros.objects.filter(nombre__icontains=patron)
         contexto = {"libros": libros}
     else:
-        contexto = {"comics": Libros.objects.all()}
-    return render(request, "cd_html/libros.html", contexto)
+        contexto = {"libros": Libros.objects.all()}
+    return render(request, "gestion/libros.html", contexto)
 
 #Modificar Libros:
 
@@ -230,6 +179,7 @@ def librosMod(request, id_libros):
             libros.genero = miForm.cleaned_data.get("genero")
             libros.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             libros.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
+            libros.precio = miForm.cleaned_data.get("precio")
             libros.save()
             contexto = {"libros": Libros.objects.all()}
             return render(request,"cd_html/libros.html", contexto)
@@ -239,9 +189,10 @@ def librosMod(request, id_libros):
                                      "autor": libros.autor, 
                                      "genero": libros.genero, 
                                      "cantidad_stock": libros.cantidad_stock,
-                                     "cantidad_hojas": libros.cantidad_hojas})
+                                     "cantidad_hojas": libros.cantidad_hojas,
+                                     "precio": libros.precio})
         
-    return render(request, "cd_html/librosForm.html", {"form": miForm})
+    return render(request, "gestion/librosForm.html", {"form": miForm})
 
 #Borrar Libros:
 
@@ -249,7 +200,7 @@ def librosDel(request, id_libros):
     libros = Libros.objects.get(id=id_libros)
     libros.delete()
     contexto = {"libros": Libros.objects.all()}
-    return render(request,"cd_html/libros.html", contexto)
+    return render(request,"gestion/libros.html", contexto)
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -260,4 +211,4 @@ def usuarios(request):
     contexto = {
         "usuarios": Usuarios.objects.all()
     }
-    return render(request, 'cd_html/usuarios.html', contexto)
+    return render(request, 'gestion/usuarios.html', contexto)

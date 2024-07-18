@@ -1,16 +1,17 @@
-{% extends 'cd_html/index.html' %}
+{% extends 'gestion/index.html' %}
 
 {% block titulo %}
-<title>Libros</title>
+<title>Comics</title>
 {% endblock titulo %}
 
 {% block contenido %}
+
 <div class="lista_mangas">
-    <h1>Lista de Libros</h1>
+    <h1>Lista de Comics</h1>
     <table>
         <tr>
             <td>
-                <a href="{% url 'librosForm' %}" class="btn btn-primary btn-sm"> <i class="fa fa-plus fa-lg" title="agregar"> </i>Agregar</a>
+                <button class="btn_agregar_mangas"><a href="{% url 'comicsCreate' %}"><i class="fa fa-plus fa-lg" title="agregar"></i> Agregar</a></button>
             </td>        
         </tr>
     </table>
@@ -24,11 +25,12 @@
                 <th>Género</th>
                 <th>Cantidad de hojas</th>
                 <th>Cantidad en Stock</th>
+                <th>Precio</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for libro in libros %}
+            {% for libro in comics_list %}
             <tr>
                 <td>{{ libro.id }}</td>
                 <td>{{ libro.nombre }}</td>
@@ -37,9 +39,10 @@
                 <td>{{ libro.genero }}</td>
                 <td>{{ libro.cantidad_hojas }}</td>
                 <td>{{ libro.cantidad_stock }}</td>
+                <td>{{ libro.precio }}</td>
                 <td>
-                    <a href="{% url 'librosMod' libro.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
-                    <a href="{% url 'librosDel' libro.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
+                    <a href="{%  url 'comicsUpdate' libro.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
+                    <a href="{%  url 'comicsDelete' libro.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
                 </td>
             </tr>
             {% endfor %}
