@@ -1,29 +1,45 @@
 from django import forms
+from .models import Mangas, Libros, Comics
+from .models import Profile
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
-class MangasForm(forms.Form):
-    nombre = forms.CharField(max_length=150, required=True, label="Nombre del Manga")
-    tomo = forms.IntegerField(required=True, label="Tomo del Manga")
-    editorial = forms.CharField(max_length=150, required=True, label="Editorial del Manga")
-    autor = forms.CharField(max_length=150, required=True, label="Autor del Manga")
-    demografia = forms.CharField(max_length=150, required=True)
-    cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
-    cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
-    precio = forms.IntegerField(required=True, label="Precio")
+#forms para crear el registro:
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
 
-class ComicsForm(forms.Form):
-    nombre = forms.CharField(max_length=150, required=True, label="Nombre del Comic")
-    editorial = forms.CharField(max_length=150, required=True, label="Editorial del Comic")
-    autor = forms.CharField(max_length=150, required=True, label="Autor del Comic")
-    genero = forms.CharField(max_length=150, required=True)
-    cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
-    cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
-    precio = forms.IntegerField(required=True, label="Precio")
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
-class LibrosForm(forms.Form):
-    nombre = forms.CharField(max_length=150, required=True, label="Nombre del Libro")
-    editorial = forms.CharField(max_length=150, required=True, label="Editorial del Libro")
-    autor = forms.CharField(max_length=150, required=True, label="Autor del Libro")
-    genero = forms.CharField(max_length=150, required=True)
-    cantidad_stock = forms.IntegerField(required=True, label="Cantidad en Stock")
-    cantidad_hojas = forms.IntegerField(required=True, label="Cantidad de hojas")
-    precio = forms.IntegerField(required=True, label="Precio")
+#forms para edición de perfil de usuarios:
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['image']
+
+
+#Formulario para mangas:
+class MangasForm(forms.ModelForm):
+    class Meta:
+        model = Mangas
+        fields = ['nombre', 'tomo', 'editorial', 'autor', 'demografia', 'cantidad_stock', 'cantidad_hojas', 'precio', 'imagen']
+
+#Formulario para libros:
+class LibrosForm(forms.ModelForm):
+    class Meta:
+        model = Libros
+        fields = ['nombre', 'autor', 'editorial', 'genero', 'cantidad_stock', 'cantidad_hojas', 'precio', 'imagen']
+
+#Formulario para cómics:
+class ComicsForm(forms.ModelForm):
+    class Meta:
+        model = Comics
+        fields = ['nombre', 'editorial', 'autor', 'genero', 'cantidad_stock', 'cantidad_hojas', 'precio', 'imagen']

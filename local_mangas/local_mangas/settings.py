@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #app proyecto
-    'gestion',
+    'gestion.apps.GestionConfig',
 ]
 
 MIDDLEWARE = [
@@ -123,6 +123,12 @@ USE_TZ = True
 STATIC_URL = 'gestion/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
 
 
 # Default primary key field type

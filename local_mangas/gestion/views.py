@@ -2,6 +2,15 @@ from django.shortcuts import render
 from gestion.models import *
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView, FormView, UpdateView
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth.views import LoginView
+
 
 # Métodos para visualizar en la página los html
 
@@ -15,90 +24,61 @@ def index(request):
     }
     return render(request, 'gestion/index.html', contexto)
 
+#------------------------------------------------------------------------------------------------------------
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+
+#Utilizo CBV para modificar el perfil de usuario, validar los métodos get y post, guardar los datos y finalizar
+#con un mensaje que indique que su perfil fue modificado:
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'
+
+    def get(self, request, *args, **kwargs):
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+        return self.render_to_response({'u_form': u_form, 'p_form': p_form})
+
+    def post(self, request, *args, **kwargs):
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, f'Se guardaron los datos con éxito!')
+            return redirect('profile')
+
+        return self.render_to_response({'u_form': u_form, 'p_form': p_form})
+    
+#Registro:
+
+class SignUpView(CreateView):
+    form_class = CustomUserCreationForm
+    success_url = reverse_lazy('login')  # Redirige a la página de login después de registrarse
+    template_name = 'gestion/login.html'
 
 #------------------------------------------------------------------------------------------------------------
 
 #Métodos pertenecientes a los Mangas:
 
-def mangas(request):
-    contexto = {
-        "mangas": Mangas.objects.all()
-    }
-    return render(request, 'gestion/mangas.html', contexto)
+class MangasView(ListView):
+    model = Mangas
 
-#Form del Manga
+class MangasCreate(CreateView):
+    model = Mangas
+    fields = ["nombre","tomo","editorial","autor","demografia","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("mangas")
 
-def mangasForm(request):
-    if request.method == "POST":
-        miForm = MangasForm(request.POST)
-        if miForm.is_valid():
-            form_nombre = miForm.cleaned_data.get("nombre")
-            form_tomo = miForm.cleaned_data.get("tomo")
-            form_editorial = miForm.cleaned_data.get("editorial")
-            form_autor = miForm.cleaned_data.get("autor")
-            form_demografia = miForm.cleaned_data.get("demografia")
-            form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            form_precio = miForm.cleaned_data.get("precio")
-            mangas = Mangas(nombre=form_nombre, tomo=form_tomo, editorial=form_editorial, autor=form_autor, demografia=form_demografia, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio)
-            mangas.save()
-            contexto = {"mangas": Mangas.objects.all()}
-            return render(request,"gestion/mangas.html", contexto)
-    else:
-        miForm = MangasForm()
-    return render(request, "gestion/mangasForm.html", {"form": miForm})
+class MangasUpdate(UpdateView):
+    model = Mangas
+    fields = ["nombre","tomo","editorial","autor","demografia","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("mangas")
 
-#Buscar y encontrar del Manga:
-
-def buscarMangas(request):
-    return render(request, "gestion/buscarMangas.html")
-
-def encontrarMangas(request):
-    if request.GET["buscar"]:
-        patron = request.GET["buscar"]
-        mangas = Mangas.objects.filter(nombre__icontains=patron)
-        contexto = {"mangas": mangas}
-    else:
-        contexto = {"mangas": Mangas.objects.all()}
-    return render(request, "gestion/mangas.html", contexto)
-
-#Modificar Mangas
-
-def mangasMod(request, id_mangas):
-    mangas = Mangas.objects.get(id=id_mangas)
-    if request.method == "POST":
-        miForm = MangasForm(request.POST)
-        if miForm.is_valid():
-            mangas.nombre = miForm.cleaned_data.get("nombre")
-            mangas.tomo = miForm.cleaned_data.get("tomo")
-            mangas.editorial = miForm.cleaned_data.get("editorial")
-            mangas.autor = miForm.cleaned_data.get("autor")
-            mangas.demografia = miForm.cleaned_data.get("demografia")
-            mangas.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            mangas.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            mangas.precio = miForm.cleaned_data.get("precio")
-            mangas.save()
-            contexto = {"mangas": Mangas.objects.all()}
-            return render(request,"gestion/mangas.html", contexto)
-    else:
-        miForm = MangasForm(initial={"nombre": mangas.nombre, 
-                                     "tomo": mangas.tomo , 
-                                     "editorial": mangas.editorial, 
-                                     "autor": mangas.autor, 
-                                     "demografia": mangas.demografia, 
-                                     "cantidad_stock": mangas.cantidad_stock,
-                                     "cantidad_hojas": mangas.cantidad_hojas,
-                                     "precio": mangas.precio})
-        
-    return render(request, "gestion/mangasForm.html", {"form": miForm})
-
-#Borrar Mangas:
-
-def mangasDel(request, id_mangas):
-    mangas = Mangas.objects.get(id=id_mangas)
-    mangas.delete()
-    contexto = {"mangas": Mangas.objects.all()}
-    return render(request,"gestion/mangas.html", contexto)
+class MangasDelete(DeleteView):
+    model = Mangas
+    success_url = reverse_lazy("mangas")
 
 #------------------------------------------------------------------------------------------------------------
 
@@ -109,12 +89,12 @@ class ComicsView(ListView):
 
 class ComicsCreate(CreateView):
     model = Comics
-    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio"]
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
     success_url = reverse_lazy("comics")
 
 class ComicsUpdate(UpdateView):
     model = Comics
-    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio"]
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
     success_url = reverse_lazy("comics")
 
 class ComicsDelete(DeleteView):
@@ -144,7 +124,8 @@ def librosForm(request):
             form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
             form_precio = miForm.cleaned_data.get("precio")
-            libros = Libros(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio)
+            form_imagen = miForm.cleaned_data.get("imagen")
+            libros = Libros(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio, imagen = form_imagen)
             libros.save()
             contexto = {"libros": Libros.objects.all()}
             return render(request,"gestion/libros.html", contexto)
@@ -180,6 +161,7 @@ def librosMod(request, id_libros):
             libros.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
             libros.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
             libros.precio = miForm.cleaned_data.get("precio")
+            libros.imagen = miForm.cleaned_data.get("imagen")
             libros.save()
             contexto = {"libros": Libros.objects.all()}
             return render(request,"cd_html/libros.html", contexto)
@@ -190,7 +172,8 @@ def librosMod(request, id_libros):
                                      "genero": libros.genero, 
                                      "cantidad_stock": libros.cantidad_stock,
                                      "cantidad_hojas": libros.cantidad_hojas,
-                                     "precio": libros.precio})
+                                     "precio": libros.precio,
+                                     "imagen": libros.imagen})
         
     return render(request, "gestion/librosForm.html", {"form": miForm})
 
@@ -205,10 +188,3 @@ def librosDel(request, id_libros):
 
 #------------------------------------------------------------------------------------------------------------
 
-#Métodos relacionados con el Model Usuarios:
-
-def usuarios(request):
-    contexto = {
-        "usuarios": Usuarios.objects.all()
-    }
-    return render(request, 'gestion/usuarios.html', contexto)

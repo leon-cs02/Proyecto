@@ -1,5 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 # Modelo de gestion de stock
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
 class Mangas(models.Model):
     nombre = models.CharField(max_length=150)
@@ -9,7 +17,8 @@ class Mangas(models.Model):
     demografia = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
-    precio = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2) 
+    imagen = models.ImageField(upload_to='mangas_images/')
 
     def __str__(self):
         return f"{self.nombre}"
@@ -22,7 +31,8 @@ class Libros(models.Model):
     genero = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
-    precio = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2) 
+    imagen = models.ImageField(upload_to='libros_images/')
     
     def __str__(self):
         return f"{self.nombre}"
@@ -34,18 +44,16 @@ class Comics(models.Model):
     genero = models.CharField(max_length=150)
     cantidad_stock = models.IntegerField()
     cantidad_hojas = models.IntegerField()
-    precio = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2) 
+    imagen = models.ImageField(upload_to='comics_images/')
     
     def __str__(self):
         return f"{self.nombre}"
-
-class Usuarios(models.Model):
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    nombre_usuario = models.CharField(max_length=50)
-    email = models.EmailField()
-    password = models.CharField(max_length=50)
+    
+class Figuras(models.Model):
+    nombre = models.CharField(max_length=250)
+    precio = models.DecimalField(max_digits=10, decimal_places=2) 
+    imagen = models.ImageField(upload_to='figuras_images/')
 
     def __str__(self):
-        return f"{self.nombre_usuario}"
-    
+        return f"{self.nombre}"

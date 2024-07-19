@@ -1,0 +1,18 @@
+{% extends "gestion/index.html" %}
+
+
+{% block titulo %}
+<title>Iniciar sesion</title>                               
+{% endblock titulo %}
+
+
+{% block contenido %}   
+
+<h2>Login</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
+
+{% endblock contenido %}

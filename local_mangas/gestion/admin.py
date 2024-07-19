@@ -8,10 +8,6 @@ class MangasAdmin(admin.ModelAdmin):
 class LibrosAdmin(admin.ModelAdmin):
     list_display = ("nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas")
 
-class UsuariosAdmin(admin.ModelAdmin):
-    list_display = ("nombre","apellido","nombre_usuario","email","password")
-
 
 admin.site.register(Mangas, MangasAdmin)
 admin.site.register(Libros, LibrosAdmin)
-admin.site.register(Usuarios, UsuariosAdmin)
