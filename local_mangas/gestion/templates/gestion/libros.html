@@ -17,6 +17,7 @@
     <table class="styled-table">
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Editorial</th>
@@ -31,6 +32,7 @@
         <tbody>
             {% for libro in libros %}
             <tr>
+                <td>{{ libro.imagen }}</td>
                 <td>{{ libro.id }}</td>
                 <td>{{ libro.nombre }}</td>
                 <td>{{ libro.editorial }}</td>

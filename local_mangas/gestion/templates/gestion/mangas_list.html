@@ -11,13 +11,14 @@
     <table>
         <tr>
             <td>
-                <a href="{% url 'mangasForm' %}" class="btn btn-primary btn-sm"> <i class="fa fa-plus fa-lg" title="agregar"> </i>Agregar</a>
+                <a href="{% url 'mangasCreate' %}" class="btn btn-primary btn-sm"> <i class="fa fa-plus fa-lg" title="agregar"> </i>Agregar</a>
             </td>        
         </tr>
     </table>
     <table class="styled-table">
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Tomo</th>
@@ -31,8 +32,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for manga in mangas %}
+            {% for manga in mangas_list %}
             <tr>
+                <td>
+                    {% if manga.imagen %}
+                        <img src="{{ manga.imagen.url }}" alt="{{ manga.nombre }}" style="max-width: 200px;"/>
+                    {% else %}
+                        <p>No hay imagen disponible</p>
+                    {% endif %}
+                </td>
                 <td>{{ manga.id }}</td>
                 <td>{{ manga.nombre }}</td>
                 <td>{{ manga.tomo }}</td>
@@ -43,8 +51,8 @@
                 <td>{{ manga.cantidad_stock }}</td>
                 <td>{{ manga.precio }}</td>
                 <td>
-                    <a href="{% url 'mangasMod' manga.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
-                    <a href="{% url 'mangasDel' manga.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
+                    <a href="{% url 'mangasUpdate' manga.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
+                    <a href="{% url 'mangasDelete' manga.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
                 </td>
             </tr>
             {% endfor %}

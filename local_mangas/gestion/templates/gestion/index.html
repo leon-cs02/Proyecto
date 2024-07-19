@@ -32,28 +32,40 @@
                     <li class="listas">
                         <a href="{% url 'libros' %}"><i class="fas fa-book-reader"></i> Libros</a>
                     </li>
+                    {% if user.is_authenticated %}
+                    <li class="listas">
+                        <a href="{% url 'profile' %}">
+                            {% if user.profile.image %}
+                                <img src="{{ user.profile.image.url }}" class="profile-pic" alt="Profile Picture">
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+                    </li>
+                    <li class="listas">
+                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="listas">
+                        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
 
-        
-    
-    {% block contenido %}
+        {% block contenido %}
         <h3>Bienvenidos a la página de inicio!</h3>
-    {% endblock contenido %}
+        {% endblock contenido %}
         
-    
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Tienda de Mangas y Comics. Todos los derechos reservados.</p>
-            <ul class="redes-sociales">
-                <li><a href="#!"><i class="fab fa-facebook"></i></a></li>
-                <li><a href="#!"><i class="fab fa-twitter"></i></a></li>
-                <li><a href="#!"><i class="fab fa-instagram"></i></a></li>
-            </ul>
-        </div>
-    </footer>
-    
-
+        <footer class="footer">
+            <div class="container">
+                <p> 2024 Tienda de Mangas y Comics. Todos los derechos reservados.</p>
+                <ul class="redes-sociales">
+                    <li><a href="#!"><i class="fab fa-facebook"></i></a></li>
+                    <li><a href="#!"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#!"><i class="fab fa-instagram"></i></a></li>
+                </ul>
+            </div>
+        </footer>
     </body>
 </html>
