@@ -1,11 +1,17 @@
-{% extends 'gestion/index.html' %}
+{% extends "gestion/index.html" %}
 
-{% block content %}
-<h2>Perfil</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ u_form.as_p }}
-    {{ p_form.as_p }}
-    <button type="submit">Actualizar</button>
-</form>
-{% endblock %}
+{% block titulo %}
+<title>Perfil</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<div class="container">
+    <h1>Perfil de {{ user.username }}</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ u_form.as_p }}
+        {{ p_form.as_p }}
+        <button type="submit">Actualizar Perfil</button>
+    </form>
+</div>
+{% endblock contenido %}

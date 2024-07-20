@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from gestion.models import *
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DeleteView, FormView, UpdateView
+from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import TemplateView
@@ -10,19 +10,27 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.views import LoginView
-
+from .forms import CustomUserProfileForm, ProfileUpdateForm
+from django.contrib.auth.models import User
+from .models import Profile
+from gestion.forms import *
+from django.contrib.auth.decorators import login_required
+from .models import Mangas, Libros, Comics
+from django.conf import settings
 
 # Métodos para visualizar en la página los html
 
-from gestion.forms import *
-
-
-
 def index(request):
-    contexto = {
-        
+    mangas = Mangas.objects.all()[:4]  # Traer los primeros 4 mangas
+    libros = Libros.objects.all()[:4]  # Traer los primeros 4 libros
+    comics = Comics.objects.all()[:4]  # Traer los primeros 4 cómics
+    context = {
+        'mangas': mangas,
+        'libros': libros,
+        'comics': comics,
+        'MEDIA_URL': settings.MEDIA_URL,  # Agregar MEDIA_URL al contexto
     }
-    return render(request, 'gestion/index.html', contexto)
+    return render(request, 'gestion/index.html', context)
 
 #------------------------------------------------------------------------------------------------------------
 
@@ -57,26 +65,26 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')  # Redirige a la página de login después de registrarse
-    template_name = 'gestion/login.html'
+    template_name = 'signup.html'
 
 #------------------------------------------------------------------------------------------------------------
 
 #Métodos pertenecientes a los Mangas:
 
-class MangasView(ListView):
+class MangasView(ListView, LoginRequiredMixin):
     model = Mangas
 
-class MangasCreate(CreateView):
-    model = Mangas
-    fields = ["nombre","tomo","editorial","autor","demografia","cantidad_stock","cantidad_hojas","precio", "imagen"]
-    success_url = reverse_lazy("mangas")
-
-class MangasUpdate(UpdateView):
+class MangasCreate(CreateView, LoginRequiredMixin):
     model = Mangas
     fields = ["nombre","tomo","editorial","autor","demografia","cantidad_stock","cantidad_hojas","precio", "imagen"]
     success_url = reverse_lazy("mangas")
 
-class MangasDelete(DeleteView):
+class MangasUpdate(UpdateView, LoginRequiredMixin):
+    model = Mangas
+    fields = ["nombre","tomo","editorial","autor","demografia","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("mangas")
+
+class MangasDelete(DeleteView, LoginRequiredMixin):
     model = Mangas
     success_url = reverse_lazy("mangas")
 
@@ -84,20 +92,20 @@ class MangasDelete(DeleteView):
 
 #Métodos pertenecientes al Model Cómics:
 
-class ComicsView(ListView):
+class ComicsView(ListView, LoginRequiredMixin):
     model = Comics
 
-class ComicsCreate(CreateView):
-    model = Comics
-    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
-    success_url = reverse_lazy("comics")
-
-class ComicsUpdate(UpdateView):
+class ComicsCreate(CreateView, LoginRequiredMixin):
     model = Comics
     fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
     success_url = reverse_lazy("comics")
 
-class ComicsDelete(DeleteView):
+class ComicsUpdate(UpdateView, LoginRequiredMixin):
+    model = Comics
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("comics")
+
+class ComicsDelete(DeleteView, LoginRequiredMixin):
     model = Comics
     success_url = reverse_lazy("comics")
 
@@ -105,86 +113,71 @@ class ComicsDelete(DeleteView):
 
 #Métodos pertenecientes al model Libros:
 
-def libros(request):
-    contexto = {
-        "libros": Libros.objects.all()
-    }
-    return render(request, 'gestion/libros.html', contexto)
+class LibrosView(ListView, LoginRequiredMixin):
+    model = Libros
 
-#Form de los Libros:
+#Método para agregar a la BD:
 
-def librosForm(request):
-    if request.method == "POST":
-        miForm = LibrosForm(request.POST)
-        if miForm.is_valid():
-            form_nombre = miForm.cleaned_data.get("nombre")
-            form_editorial = miForm.cleaned_data.get("editorial")
-            form_autor = miForm.cleaned_data.get("autor")
-            form_genero = miForm.cleaned_data.get("genero")
-            form_cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            form_cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            form_precio = miForm.cleaned_data.get("precio")
-            form_imagen = miForm.cleaned_data.get("imagen")
-            libros = Libros(nombre=form_nombre, editorial=form_editorial, autor=form_autor, genero=form_genero, cantidad_stock=form_cantidad_stock, cantidad_hojas = form_cantidad_hojas, precio = form_precio, imagen = form_imagen)
-            libros.save()
-            contexto = {"libros": Libros.objects.all()}
-            return render(request,"gestion/libros.html", contexto)
-    else:
-        miForm = LibrosForm()
-    return render(request, "gestion/librosForm.html", {"form": miForm})
+class LibrosCreate(CreateView, LoginRequiredMixin):
+    model = Libros
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("libros")
 
-#Buscar y encontrar los Libros:
+#Método para actualizar los campos de los libros:
 
-def buscarLibros(request):
-    return render(request, "gestion/buscarLibros.html")
+class LibrosUpdate(UpdateView, LoginRequiredMixin):
+    model = Libros
+    fields = ["nombre","editorial","autor","genero","cantidad_stock","cantidad_hojas","precio", "imagen"]
+    success_url = reverse_lazy("libros")
 
-def encontrarLibros(request):
-    if request.GET["buscar"]:
-        patron = request.GET["buscar"]
-        libros = Libros.objects.filter(nombre__icontains=patron)
-        contexto = {"libros": libros}
-    else:
-        contexto = {"libros": Libros.objects.all()}
-    return render(request, "gestion/libros.html", contexto)
+#Método para borrar de la BD un libro:
 
-#Modificar Libros:
-
-def librosMod(request, id_libros):
-    libros = Libros.objects.get(id=id_libros)
-    if request.method == "POST":
-        miForm = LibrosForm(request.POST)
-        if miForm.is_valid():
-            libros.nombre = miForm.cleaned_data.get("nombre")
-            libros.editorial = miForm.cleaned_data.get("editorial")
-            libros.autor = miForm.cleaned_data.get("autor")
-            libros.genero = miForm.cleaned_data.get("genero")
-            libros.cantidad_stock = miForm.cleaned_data.get("cantidad_stock")
-            libros.cantidad_hojas = miForm.cleaned_data.get("cantidad_hojas")
-            libros.precio = miForm.cleaned_data.get("precio")
-            libros.imagen = miForm.cleaned_data.get("imagen")
-            libros.save()
-            contexto = {"libros": Libros.objects.all()}
-            return render(request,"cd_html/libros.html", contexto)
-    else:
-        miForm = LibrosForm(initial={"nombre": libros.nombre,  
-                                     "editorial": libros.editorial, 
-                                     "autor": libros.autor, 
-                                     "genero": libros.genero, 
-                                     "cantidad_stock": libros.cantidad_stock,
-                                     "cantidad_hojas": libros.cantidad_hojas,
-                                     "precio": libros.precio,
-                                     "imagen": libros.imagen})
-        
-    return render(request, "gestion/librosForm.html", {"form": miForm})
-
-#Borrar Libros:
-
-def librosDel(request, id_libros):
-    libros = Libros.objects.get(id=id_libros)
-    libros.delete()
-    contexto = {"libros": Libros.objects.all()}
-    return render(request,"gestion/libros.html", contexto)
+class LibrosDelete(DeleteView, LoginRequiredMixin):
+    model = Libros
+    success_url = reverse_lazy("libros")
 
 
 #------------------------------------------------------------------------------------------------------------
 
+class FigurasView(ListView, LoginRequiredMixin):
+    model = Figuras
+
+class FigurasCreate(CreateView, LoginRequiredMixin):
+    model = Figuras
+    fields = ["nombre", "precio", "imagen"]
+    success_url = reverse_lazy("figuras")
+
+class FigurasUpdate(UpdateView, LoginRequiredMixin):
+    model = Figuras
+    fields = ["nombre", "precio", "imagen"]
+    success_url = reverse_lazy("figuras")
+
+class FigurasDelete(DeleteView, LoginRequiredMixin):
+    model = Figuras
+    success_url = reverse_lazy("figuras")
+
+#------------------------------------------------------------------------------------------------------------
+
+#Barra de búsqueda: 
+from django.views.generic import ListView
+from .models import Mangas, Libros, Comics
+
+class SearchResultsView(ListView):
+    template_name = 'gestion/search_results.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = {
+            'mangas': Mangas.objects.filter(nombre__icontains=query),
+            'libros': Libros.objects.filter(nombre__icontains=query),
+            'comics': Comics.objects.filter(nombre__icontains=query)
+        }
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_queryset())
+        context['query'] = self.request.GET.get('q')
+        return context
+#------------------------------------------------------------------------------------------------------------

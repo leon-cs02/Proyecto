@@ -33,7 +33,13 @@
         <tbody>
             {% for libro in comics_list %}
             <tr>
-                <td>{{ libro.imagen }}</td>
+                <td>
+                    {% if libro.imagen %}
+                        <img src="{{ libro.imagen.url }}" alt="{{ libro.nombre }}" style="max-width: 200px;"/>
+                    {% else %}
+                        <p>No hay imagen disponible</p>
+                    {% endif %}
+                </td>
                 <td>{{ libro.id }}</td>
                 <td>{{ libro.nombre }}</td>
                 <td>{{ libro.editorial }}</td>
