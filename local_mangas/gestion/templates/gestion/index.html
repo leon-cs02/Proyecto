@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% load static %}
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Iconos sacados de Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        
-        {% block titulo %}
-        <title>Inicio</title>
-        {% endblock titulo %}
-            
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-    </head>
-    <body>
-        <div class="navegacion">
-            <nav class="menu">
-                <ul>
-                    <h1 class="logo">
-                        <i class="fas fa-book"></i> logo
-                    </h1>
-                    <li class="listas">
-                        <a href="{% url 'index' %}"><i class="fas fa-home"></i> Inicio</a>
-                    </li>
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Iconos sacados de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    {% block titulo %}
+    <title>Inicio</title>
+    {% endblock titulo %}
+
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+</head>
+<body>
+    <div class="navegacion">
+        <nav class="menu">
+            <ul>
+                <h1 class="logo">
+                    <i class="fas fa-book"></i> logo
+                </h1>
+                <li class="listas">
+                    <a href="{% url 'index' %}"><i class="fas fa-home"></i> Inicio</a>
+                </li>
+
+                {% if user.is_authenticated %}
                     <li class="listas">
                         <a href="{% url 'mangas' %}"><i class="fas fa-book-open"></i> Mangas</a>
                     </li>
@@ -32,40 +34,105 @@
                     <li class="listas">
                         <a href="{% url 'libros' %}"><i class="fas fa-book-reader"></i> Libros</a>
                     </li>
-                    {% if user.is_authenticated %}
+                    <li class="listas">
+                        <a href="{% url 'figuras' %}"><i class="fa-solid fa-dragon"></i> Figuras</a>
+                    </li>
                     <li class="listas">
                         <a href="{% url 'profile' %}">
-                            {% if user.profile.image %}
-                                <img src="{{ user.profile.image.url }}" class="profile-pic" alt="Profile Picture">
-                            {% endif %}
-                            {{ user.username }}
+                            <div class="profile-container">
+                                {% if user.profile.image %}
+                                    <img src="{{ user.profile.image.url }}" class="profile-pic">
+                                {% else %}
+                                    <img src="{{ MEDIA_URL }}avatar_default.jpg" class="profile-pic">
+                                {% endif %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            </div>
                         </a>
                     </li>
                     <li class="listas">
-                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class=""><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                        </form>
                     </li>
-                    {% else %}
+                {% else %}
                     <li class="listas">
-                        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
                     </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                    <li class="listas">
+                        <a href="{% url 'signup' %}"><i class="fas fa-user-plus"></i> Registrarse</a>
+                    </li>
+                {% endif %}
+                <li class="listas">
+                    <form method="get" action="{% url 'search_results' %}" class="search-form">
+                        <input type="text" name="q" placeholder="Buscar...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    {% block contenido %}
+    <div class="galeria-productos">
+        <h2>Mangas</h2>
+        <div class="productos">
+            {% for manga in mangas %}
+                <div class="producto">
+                    <img src="{{ manga.imagen.url }}" alt="{{ manga.nombre }}">
+                    <h3>{{ manga.nombre }}</h3>
+                    <p>Precio: ${{ manga.precio }}</p>
+                </div>
+            {% endfor %}
         </div>
 
-        {% block contenido %}
-        <h3>Bienvenidos a la página de inicio!</h3>
-        {% endblock contenido %}
+        <h2>Libros</h2>
+        <div class="productos">
+            {% for libro in libros %}
+                <div class="producto">
+                    <img src="{{ libro.imagen.url }}" alt="{{ libro.nombre }}">
+                    <h3>{{ libro.nombre }}</h3>
+                    <p>Precio: ${{ libro.precio }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Comics</h2>
+        <div class="productos">
+            {% for comic in comics %}
+                <div class="producto">
+                    <img src="{{ comic.imagen.url }}" alt="{{ comic.nombre }}">
+                    <h3>{{ comic.nombre }}</h3>
+                    <p>Precio: ${{ comic.precio }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Figuras</h2>
+        <div class="productos">
+            {% for figura in figuras %}
+                <div class="producto">
+                    <img src="{{ figura.imagen.url }}" alt="{{ figura.nombre }}">
+                    <h3>{{ figura.nombre }}</h3>
+                    <p>Precio: ${{ figura.precio }}</p>
+                </div>
+            {% endfor %}
+        </div>
         
-        <footer class="footer">
-            <div class="container">
-                <p> 2024 Tienda de Mangas y Comics. Todos los derechos reservados.</p>
-                <ul class="redes-sociales">
-                    <li><a href="#!"><i class="fab fa-facebook"></i></a></li>
-                    <li><a href="#!"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="#!"><i class="fab fa-instagram"></i></a></li>
-                </ul>
-            </div>
-        </footer>
-    </body>
+    </div>
+
+    
+    {% endblock contenido %}
+
+    <footer class="footer">
+        <div class="container">
+            <p> 2024 Tienda de Mangas y Comics. Todos los derechos reservados.</p>
+            <ul class="redes-sociales">
+                <li><a href="#!"><i class="fab fa-facebook"></i></a></li>
+                <li><a href="#!"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#!"><i class="fab fa-instagram"></i></a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
 </html>

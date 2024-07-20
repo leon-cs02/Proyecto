@@ -10,7 +10,7 @@
     <table>
         <tr>
             <td>
-                <a href="{% url 'librosForm' %}" class="btn btn-primary btn-sm"> <i class="fa fa-plus fa-lg" title="agregar"> </i>Agregar</a>
+                <a href="{% url 'librosCreate' %}" class="btn btn-primary btn-sm"> <i class="fa fa-plus fa-lg" title="agregar"> </i>Agregar</a>
             </td>        
         </tr>
     </table>
@@ -30,9 +30,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for libro in libros %}
+            {% for libro in libros_list %}
             <tr>
-                <td>{{ libro.imagen }}</td>
+                <td>
+                    {% if libro.imagen %}
+                        <img src="{{ libro.imagen.url }}" alt="{{ libro.nombre }}" style="max-width: 200px;"/>
+                    {% else %}
+                        <p>No hay imagen disponible</p>
+                    {% endif %}
+                </td>
                 <td>{{ libro.id }}</td>
                 <td>{{ libro.nombre }}</td>
                 <td>{{ libro.editorial }}</td>
@@ -42,8 +48,8 @@
                 <td>{{ libro.cantidad_stock }}</td>
                 <td>{{ libro.precio }}</td>
                 <td>
-                    <a href="{% url 'librosMod' libro.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
-                    <a href="{% url 'librosDel' libro.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
+                    <a href="{% url 'librosUpdate' libro.id %}" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-edit fa-sm" title="Edit Record"></i></a>
+                    <a href="{% url 'librosDelete' libro.id %}" class="btn btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"><i class="fa fa-trash fa-sm" title="Delete Record"></i></a>                
                 </td>
             </tr>
             {% endfor %}

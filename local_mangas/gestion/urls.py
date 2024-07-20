@@ -2,9 +2,12 @@ from django.urls import path, include
 from gestion.views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf import settings
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
+from .views import CustomLoginView, ProfileView, SignUpView
+from .views import SearchResultsView
 
 
 urlpatterns = [
@@ -20,12 +23,10 @@ urlpatterns = [
 
     #Libros:
 
-    path('libros/', libros, name="libros"),
-    path('librosForm/', librosForm, name="librosForm"),
-    path('buscarLibros/', buscarLibros, name="buscarLibros"),
-    path('encontrarLibros/', encontrarLibros, name="encontrarLibros"),
-    path('librosMod/<id_libros>/', librosMod, name="librosMod"),
-    path('librosDel/<id_libros>/', librosDel, name="librosDel"),
+    path('libros/', LibrosView.as_view(), name="libros"),
+    path('librosCreate/', LibrosCreate.as_view(), name="librosCreate"),
+    path('librosUpdate/<int:pk>/', LibrosUpdate.as_view(), name="librosUpdate"),
+    path('librosDelete/<int:pk>/', LibrosDelete.as_view(), name="librosDelete"),
 
     #Comics:
     path('comics/', ComicsView.as_view(), name="comics"),
@@ -33,10 +34,23 @@ urlpatterns = [
     path('comicsUpdate/<int:pk>/', ComicsUpdate.as_view(), name="comicsUpdate"),
     path('comicsDelete/<int:pk>/', ComicsDelete.as_view(), name="comicsDelete"),
 
+    #Figuras:
+     path('figuras/', FigurasView.as_view(), name="figuras"),
+    path('figurasCreate/', FigurasCreate.as_view(), name="figurasCreate"),
+    path('figurasUpdate/<int:pk>/', FigurasUpdate.as_view(), name="figurasUpdate"),
+    path('figurasDelete/<int:pk>/', FigurasDelete.as_view(), name="figurasDelete"),
+
     #Autentication:
     path('login/', auth_views.LoginView.as_view(template_name='gestion/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('profile/', ProfileView.as_view(), name='profile'),
-    path('signup/', SignUpView.as_view(), name='signup'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='gestion/logout.html'), name='logout'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('profile/', ProfileView.as_view(template_name='gestion/profile.html'), name='profile'),
+    path('signup/', SignUpView.as_view(template_name='gestion/signup.html'), name='signup'),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    #Barra de búsqueda:
+
+    path('search/', SearchResultsView.as_view(), name='search_results'),
+
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
